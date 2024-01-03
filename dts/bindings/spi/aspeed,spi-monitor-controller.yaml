@@ -90,11 +90,6 @@ child-binding:
       required: false
       description: Block a invalid access by an extra clock.
 
-    flash-device:
-      type: phandle
-      required: true
-      description: flash device controlled by the SPI monitor.
-
     ext-mux-sel:
       type: int
       required: false

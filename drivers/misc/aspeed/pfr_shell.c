@@ -16,20 +16,8 @@
 static int bmc_rst_demo(const struct shell *shell, size_t argc, char *argv[])
 {
 
-	const struct device *spim_dev1 = NULL;
-
-	spim_dev1 = device_get_binding("spi_m1");
-	if (!spim_dev1) {
-		shell_error(shell, "cannot get the device, spi_m1.\n");
-		return -ENODEV;
-	}
-
-	/* SRST# */
-	pfr_bmc_srst_enable_ctrl(true);
-
-	spim_rst_flash(spim_dev1, 500);
-
-	pfr_bmc_srst_enable_ctrl(false);
+	pfr_bmc_extrst_enable_ctrl(true);
+	pfr_bmc_extrst_enable_ctrl(false);
 
 	return 0;
 }

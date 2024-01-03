@@ -114,7 +114,6 @@
 	log-ram-size = <0x200>;
 	pinctrl-0 = <pinctrl_spim1_quad_default>;
 	pinctrl-names = "default";
-	flash-device = <&spi1_cs0>;
 	ext-mux-sel = <1>;
 	status = "okay";
 };
@@ -124,7 +123,6 @@
 	log-ram-size = <0x200>;
 	pinctrl-0 = <pinctrl_spim3_quad_default>;
 	pinctrl-names = "default";
-	flash-device = <&spi2_cs0>;
 	ext-mux-sel = <1>;
 	status = "okay";
 };
@@ -135,7 +133,6 @@
 	pinctrl-0 = <pinctrl_spim4_quad_default>;
 	pinctrl-names = "default";
 
-	flash-device = <&spi2_cs1>;
 	ext-mux-sel = <1>;
 	status = "okay";
 };
