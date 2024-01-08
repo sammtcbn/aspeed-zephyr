@@ -105,6 +105,7 @@
 				status = "disabled";
 			};
 		};
+
 		gpio0: gpio@7e780000 {
 			compatible = "aspeed,gpio";
 			reg = <0x7e780000 0x400>;
@@ -1165,37 +1166,34 @@
 			resets = <&sysrst ASPEED_RESET_HACE>;
 		};
 
-		rsa: rsa@7e6f2000 {
-			compatible = "aspeed,rsa";
-			#address-cells = <1>;
-			#size-cells = <1>;
-			reg = <0x7e6f2000 0x100
-				   0x79000000 0x1800>;
-			clocks = <&sysclk ASPEED_CLK_GATE_RSACLK>;
-			label = "RSA";
-		};
-
-		ecdsa: ecdsa@7e6f2000 {
-			compatible = "aspeed,ecdsa";
-			#address-cells = <1>;
-			#size-cells = <1>;
-			reg = <0x7e6f2000 0x100
-				   0x79000000 0x2400>;
-			label = "ECDSA";
-		};
-
 		rng: hwrng@7e6e2530 {
 			compatible = "aspeed,hwrng";
 			reg = <0x7e6e2530 0x10>;
 			label = "RNG";
 		};
 
-		otp: otp@7e6f2000 {
-			compatible = "aspeed,otp";
-			reg = <0x7e6f2000 0x80>;
-			otpcfg = <>;
-			otpstrap = <>;
+		sbc: sbc@7e6f2000 {
+			reg = <0x7e6f2000 0x100
+			       0x79000000 0x2400>;
+
+			rsa: rsa {
+				compatible = "aspeed,rsa";
+				clocks = <&sysclk ASPEED_CLK_GATE_RSACLK>;
+				label = "RSA";
+			};
+
+			ecdsa: ecdsa {
+				compatible = "aspeed,ecdsa";
+				label = "ECDSA";
+			};
+
+			otp: otp {
+				compatible = "aspeed,otp";
+				otpcfg = <>;
+				otpstrap = <>;
+			};
 		};
+
 	};
 };
 
