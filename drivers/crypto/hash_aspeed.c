@@ -240,6 +240,7 @@ static int aspeed_hash_digest_hmac(struct hash_ctx *ctx, struct hash_pkt *pkt)
 
 	/* Use Initial Vector */
 	memcpy(data->digest, data->iv, data->iv_size);
+	cache_data_range(data->digest, data->iv_size, K_CACHE_WB);
 
 	/* Direct Access Mode / ACC Mode */
 	data->method &= ~(HACE_SG_EN);
@@ -248,6 +249,7 @@ static int aspeed_hash_digest_hmac(struct hash_ctx *ctx, struct hash_pkt *pkt)
 		LOG_ERR("%s: hash 1 failed, rc=%d\n", __func__, rc);
 		goto end;
 	}
+	cache_data_all(K_CACHE_INVD);
 
 	/* H(opad + hash sum 1) */
 	data->digcnt[0] = bs + ds;
@@ -261,6 +263,7 @@ static int aspeed_hash_digest_hmac(struct hash_ctx *ctx, struct hash_pkt *pkt)
 
 	/* Use Initial Vector */
 	memcpy(data->digest, data->iv, data->iv_size);
+	cache_data_range(data->digest, data->iv_size, K_CACHE_WB);
 
 	rc = hash_trigger(data, data->bufcnt);
 	if (rc) {
