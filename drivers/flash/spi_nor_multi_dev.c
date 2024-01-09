@@ -1480,10 +1480,10 @@ static int spi_nor_process_sfdp(const struct device *dev)
 			union {
 				uint32_t dw[MIN(php->len_dw, JESD216_MAX_DWORD)];
 				struct jesd216_bfp bfp;
-			} u;
-			const struct jesd216_bfp *bfp = &u.bfp;
+			} v;
+			const struct jesd216_bfp *bfp = &v.bfp;
 
-			rc = spi_nor_sfdp_read(dev, jesd216_param_addr(php), u.dw, sizeof(u.dw));
+			rc = spi_nor_sfdp_read(dev, jesd216_param_addr(php), v.dw, sizeof(v.dw));
 			if (rc == 0) {
 				rc = spi_nor_process_bfp(dev, php, bfp);
 			}
