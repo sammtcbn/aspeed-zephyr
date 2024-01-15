@@ -12,9 +12,9 @@ static void platform_ipm_callback(const struct device *dev, void *ctx,
 	uint32_t shared_memory_rx = (uint32_t)&shm_rx;
 	uint32_t shared_memory_tx = (uint32_t)&shm_tx;
 
-	printk("[CM3] rx addr:%08x, tx addr:%08x\n", shared_memory_rx, shared_memory_tx);
-	/* Check the CM3 RX data from CA7 RX data. */
-	printk("CM3 RX data from CA7 TX data:\n");
+	printk("[SSP] RX addr:%08x, TX addr:%08x\n", shared_memory_rx, shared_memory_tx);
+	/* Check the SSP RX data from CA7 RX data. */
+	printk("[SSP] RX data from PSP TX data:\n");
 	for (i = 0; i < CONFIG_IPC_SHM_SIZE / 2; i += 4) {
 		if (sys_read32(shared_memory_rx + i) != 0) {
 			if (((i >> 2) & 0x3) == 0x0)
@@ -26,7 +26,7 @@ static void platform_ipm_callback(const struct device *dev, void *ctx,
 			break;
 	}
 
-	/* Write back to CM3 TX from CM3 RX data. */
+	/* Write back to SSP TX from SSP RX data. */
 	ipm_send(dev, 1, 0, (void *)shared_memory_rx, CONFIG_IPC_SHM_SIZE / 2);
 }
 

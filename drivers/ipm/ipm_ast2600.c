@@ -166,6 +166,12 @@ static int ipm_ast2600_init(const struct device *dev)
 		irq_enable(irq);
 	}
 
+	printk("[SSP] Clear shared memory.");
+	printk("RX:%p, TX:%p, size:0x%x\n", shm_rx, shm_tx, CONFIG_IPC_SHM_SIZE / 2);
+	/* clear shared memory for SSP communicating with PSP. */
+	memset(shm_rx, 0, CONFIG_IPC_SHM_SIZE / 2);
+	memset(shm_tx, 0, CONFIG_IPC_SHM_SIZE / 2);
+
 	return 0;
 }
 
