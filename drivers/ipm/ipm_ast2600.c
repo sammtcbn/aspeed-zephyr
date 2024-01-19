@@ -21,9 +21,11 @@ LOG_MODULE_REGISTER(ipm_ast2600);
 #define IPCR_TRIG		0x18
 #define IPCR_STATUS		0x28
 #define IPCR_CLEAR		0x2c
+#ifdef CONFIG_IPC_SHM_SIZE
 /* shared memory for ARM Cortex-M3 communicating with ARM Cortex-A7. */
 uint8_t shm_rx[CONFIG_IPC_SHM_SIZE / 2] NON_CACHED_SHM_RX = {0};
 uint8_t shm_tx[CONFIG_IPC_SHM_SIZE / 2] NON_CACHED_SHM_TX = {0};
+#endif
 #else
 /* Primary service processor ARM Cortex-A7 */
 #define IPCR_TRIG		0x28
@@ -35,7 +37,9 @@ struct ipm_ast2600_config {
 	uint32_t base;
 	uint32_t num_irqs;
 	int *irq_list;
+#ifdef CONFIG_IPC_SHM_SIZE
 	uint32_t shm_size;
+#endif
 };
 
 struct ipm_ast2600_obj {
@@ -78,7 +82,9 @@ static int ipm_ast2600_send(const struct device *dev, int wait, uint32_t id, con
 {
 	struct ipm_ast2600_config *config = DEV_CFG(dev);
 	uint32_t base = config->base;
+#ifdef CONFIG_IPC_SHM_SIZE
 	uint32_t shm_size = config->shm_size;
+#endif
 	uint32_t ret = 0;
 	uint32_t reg;
 
@@ -87,12 +93,14 @@ static int ipm_ast2600_send(const struct device *dev, int wait, uint32_t id, con
 		goto finish;
 	}
 
+#ifdef CONFIG_IPC_SHM_SIZE
 	if (size > shm_size / 2) {
 		ret = -EINVAL;
 		goto finish;
 	} else {
 		memcpy((void *)shm_tx, data, size);
 	}
+#endif
 
 	reg = sys_read32(base + IPCR_TRIG);
 	if (reg & BIT(id)) {
@@ -121,10 +129,15 @@ static uint32_t ipm_ast2600_max_id_val_get(const struct device *dev)
 
 static int ipm_ast2600_max_data_size_get(const struct device *dev)
 {
+#ifdef CONFIG_IPC_SHM_SIZE
 	struct ipm_ast2600_config *config = DEV_CFG(dev);
 
 	/* share memory include TX and RX data. */
 	return config->shm_size / 2;
+#else
+	ARG_UNUSED(dev);
+	return 0;
+#endif
 }
 
 static int ipm_ast2600_set_enabled(const struct device *dev, int enable)
@@ -166,11 +179,14 @@ static int ipm_ast2600_init(const struct device *dev)
 		irq_enable(irq);
 	}
 
+#ifdef CONFIG_IPC_SHM_SIZE
+	config->shm_size = CONFIG_IPC_SHM_SIZE;
 	printk("[SSP] Clear shared memory.");
 	printk("RX:%p, TX:%p, size:0x%x\n", shm_rx, shm_tx, CONFIG_IPC_SHM_SIZE / 2);
 	/* clear shared memory for SSP communicating with PSP. */
 	memset(shm_rx, 0, CONFIG_IPC_SHM_SIZE / 2);
 	memset(shm_tx, 0, CONFIG_IPC_SHM_SIZE / 2);
+#endif
 
 	return 0;
 }
@@ -193,7 +209,6 @@ static const struct ipm_driver_api ipm_ast2600_driver_api = {
 		.base = DT_INST_REG_ADDR(n),                                                       \
 		.num_irqs = DT_NUM_IRQS(DT_DRV_INST(n)),                                           \
 		.irq_list = ipm_ast2600_config_irq_list_##n,                                       \
-		.shm_size = DT_PROP(DT_DRV_INST(n), shm_size)                                      \
 	};                                                                                         \
 	static struct ipm_ast2600_obj ipm_ast2600_obj_##n;                                         \
 	DEVICE_DT_INST_DEFINE(n, &ipm_ast2600_config_func_##n, NULL, &ipm_ast2600_obj_##n,         \
