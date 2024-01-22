@@ -28,12 +28,18 @@ manifest:
     - name: cmsis
       revision: c3bd2094f92d574377f7af2aec147ae181aa5f8e
       path: modules/hal/cmsis
+    - name: libmetal
+      revision: 39d049d4ae68e6f6d595fce7de1dcfc1024fb4eb
+      path: modules/hal/libmetal
     - name: mbedtls
       revision: 126609c9b00306fa37f73bc24f412a1a0901a8a0
       path: modules/crypto/mbedtls
     - name: mcuboot
       revision: 2fce9769b191411d580bbc65b043956c2ae9307e
       path: bootloader/mcuboot
+    - name: open-amp
+      revision: 6010f0523cbc75f551d9256cf782f173177acdef
+      path: modules/lib/open-amp
 
   self:
     path: zephyr
