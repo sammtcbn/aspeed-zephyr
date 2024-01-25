@@ -17,7 +17,7 @@
 #include <resource_table.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(openamp_ast26xx, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(openamp_ast26xx, LOG_LEVEL_INF);
 
 #define RPMSG_CHAN_NAME	"rpmsg-client-sample"
 
@@ -42,8 +42,6 @@ static struct vdev_shm vdev0vring1;
 static struct vdev_shm vdev0buffer;
 
 static struct metal_io_region *vdev0buffer_io;
-static struct rpmsg_virtio_shm_pool shpool;
-
 static struct metal_io_region *rsc_io;
 struct rpmsg_virtio_device rvdev;
 
@@ -69,12 +67,14 @@ static K_SEM_DEFINE(data_rx_sem, 0, 1);
 static void platform_ipm_callback(const struct device *dev, void *ctx,
 				  uint32_t id, volatile void *data)
 {
+	LOG_DBG("%d: mb received from %d", __LINE__, id);
 	k_sem_give(&data_sem);
 }
 
 static int rpmsg_recv_callback(struct rpmsg_endpoint *ept, void *data,
 			       size_t len, uint32_t src, void *priv)
 {
+	LOG_DBG("%d: len=%d", __LINE__, len);
 	memcpy(rcv_msg, data, len);
 	rcv_len = len;
 	k_sem_give(&data_rx_sem);
@@ -98,15 +98,14 @@ static void receive_message(unsigned char **msg, unsigned int *len)
 static void new_service_cb(struct rpmsg_device *rdev, const char *name,
 			   uint32_t src)
 {
-	printk("%s: unexpected ns service receive for name %s\n",
-		__func__, name);
+	LOG_INF("%d: unexpected ns service receive for name %s", __LINE__, name);
 }
 
 int mailbox_notify(void *priv, uint32_t id)
 {
 	ARG_UNUSED(priv);
 
-	printk("%s: msg received\n", __func__);
+	LOG_INF("msg received from %d", id);
 	ipm_send(ipm_handle, 0, id, NULL, 0);
 
 	return 0;
@@ -120,22 +119,31 @@ static void platform_shm_init(void)
 	/* FIXME: hardcoded buffer size, make it consistent with that of Linux */
 	ssp_mem_base = PHY_SRAM_ADDR;
 	ssp_mem_size = PHY_SRAM_DMEM_LIMIT - PHY_SRAM_ADDR;
+	LOG_DBG("%d: ssp_mem: base=%x, sz=%x", __LINE__, ssp_mem_base, ssp_mem_size);
 
 	rsc_tbl.pa = ssp_mem_base + ssp_mem_size - SSP_MEM_RGN_SIZE;
 	rsc_tbl.va = TO_VIR_ADDR(rsc_tbl.pa);
 	rsc_tbl.sz = 0x1000;
+	LOG_DBG("%d: rsc_tbl: pa=%x, va=%x, sz=%x",
+		__LINE__, rsc_tbl.pa, rsc_tbl.va, rsc_tbl.sz);
 
 	vdev0vring0.pa = rsc_tbl.pa + rsc_tbl.sz;
 	vdev0vring0.va = rsc_tbl.va + rsc_tbl.sz;
 	vdev0vring0.sz = 0x1000;
+	LOG_DBG("%d: vdev0vring0: pa=%x, va=%x, sz=%x",
+		__LINE__, vdev0vring0.pa, vdev0vring0.va, vdev0vring0.sz);
 
 	vdev0vring1.pa = vdev0vring0.pa + vdev0vring0.sz;
 	vdev0vring1.va = vdev0vring0.va + vdev0vring0.sz;
 	vdev0vring1.sz = 0x1000;
+	LOG_DBG("%d: vdev0vring1: pa=%x, va=%x, sz=%x",
+		__LINE__, vdev0vring1.pa, vdev0vring1.va, vdev0vring1.sz);
 
 	vdev0buffer.pa = vdev0vring1.pa + vdev0vring1.sz;
 	vdev0buffer.va = vdev0vring1.va + vdev0vring1.sz;
 	vdev0buffer.sz = 0x1ffd000;
+	LOG_DBG("%d: vdev0buffer: pa=%x, va=%x, sz=%x",
+		__LINE__, vdev0buffer.pa, vdev0buffer.va, vdev0buffer.sz);
 }
 
 int platform_init(void)
@@ -148,44 +156,46 @@ int platform_init(void)
 
 	rc = metal_init(&metal_params);
 	if (rc) {
-		printk("cannot initialize metal\n");
+		LOG_ERR("cannot initialize metal");
 		return rc;
 	}
 
 	rc = metal_register_generic_device(&vdev_shm_dev);
 	if (rc) {
-		printk("cannot register shared memory\n");
+		LOG_ERR("cannot register shared memory");
 		return rc;
 	}
 
 	rc = metal_device_open("generic", SSP_SHM_DEV_NAME, &dev);
 	if (rc) {
-		printk("cannot open shared memory\n");
+		LOG_ERR("cannot open shared memory");
 		return rc;
 	};
 
-	/* declare resrouce table region */
-	metal_io_init(&dev->regions[0],	rsc_tbl.va, &rsc_tbl.pa, rsc_tbl.sz, -1, 0, NULL);
+	/* declare resource table region */
+	metal_io_init(&dev->regions[0],	(void *)rsc_tbl.va,
+		      (metal_phys_addr_t *)&rsc_tbl.pa, rsc_tbl.sz, -1, 0, NULL);
 
 	rsc_io = metal_device_io_region(dev, 0);
 	if (!rsc_io) {
-		printk("cannot get rsc_io region\n");
+		LOG_ERR("cannot get rsc_io region");
 		return -1;
 	}
 
 	/* declare vdev0buffer region */
-	metal_io_init(&dev->regions[1], vdev0buffer.va, &vdev0buffer.pa, vdev0buffer.sz, -1, 0, NULL);
+	metal_io_init(&dev->regions[1], (void *)vdev0buffer.va,
+		      (metal_phys_addr_t *)&vdev0buffer.pa, vdev0buffer.sz, -1, 0, NULL);
 
 	vdev0buffer_io = metal_device_io_region(dev, 1);
 	if (!vdev0buffer_io) {
-		printk("cannot get vdev0buffer_io region\n");
+		LOG_ERR("cannot get vdev0buffer_io region");
 		return -1;
 	}
 
 	/* setup IPM */
 	ipm_handle = device_get_binding(CONFIG_OPENAMP_IPC_DEV_NAME);
 	if (!ipm_handle) {
-		printk("cannot find ipm device\n");
+		LOG_ERR("cannot find ipm device");
 		return -1;
 	}
 
@@ -193,7 +203,7 @@ int platform_init(void)
 
 	rc = ipm_set_enabled(ipm_handle, 1);
 	if (rc) {
-		printk("cannot ipm_set_enabled\n");
+		LOG_ERR("cannot ipm_set_enabled");
 		return -1;
 	}
 
@@ -217,38 +227,38 @@ struct rpmsg_device *platform_create_rpmsg_vdev(unsigned int vdev_index,
 	int ret;
 
 	vdev = rproc_virtio_create_vdev(VIRTIO_DEV_SLAVE, VDEV_ID,
-					rsc_table_to_vdev(rsc_tbl.va),
+					rsc_table_to_vdev((void *)rsc_tbl.va),
 					rsc_io, NULL, mailbox_notify, NULL);
 
 	if (!vdev) {
-		printk("failed to create vdev\r\n");
+		LOG_ERR("failed to create vdev");
 		return NULL;
 	}
 
 	/* wait master rpmsg init completion */
 	rproc_virtio_wait_remote_ready(vdev);
 
-	vring_rsc = rsc_table_get_vring0(rsc_tbl.va);
+	vring_rsc = rsc_table_get_vring0((void *)rsc_tbl.va);
 	ret = rproc_virtio_init_vring(vdev, 0, vring_rsc->notifyid,
-				      vdev0vring0.va, rsc_io,
+				      (void *)vdev0vring0.va, rsc_io,
 				      vring_rsc->num, vring_rsc->align);
 	if (ret) {
-		printk("failed to init vring 0\r\n");
+		LOG_ERR("failed to init vring 0");
 		goto failed;
 	}
 
-	vring_rsc = rsc_table_get_vring1(rsc_tbl.va);
+	vring_rsc = rsc_table_get_vring1((void *)rsc_tbl.va);
 	ret = rproc_virtio_init_vring(vdev, 1, vring_rsc->notifyid,
-				      vdev0vring1.va, rsc_io,
+				      (void *)vdev0vring1.va, rsc_io,
 				      vring_rsc->num, vring_rsc->align);
 	if (ret) {
-		printk("failed to init vring 1\r\n");
+		LOG_ERR("failed to init vring 1");
 		goto failed;
 	}
 
 	ret = rpmsg_init_vdev(&rvdev, vdev, ns_cb, vdev0buffer_io, NULL);
 	if (ret) {
-		printk("failed rpmsg_init_vdev\r\n");
+		LOG_ERR("failed rpmsg_init_vdev");
 		goto failed;
 	}
 
@@ -271,18 +281,18 @@ void app_task(void *arg1, void *arg2, void *arg3)
 	unsigned char *msg;
 	unsigned int len, msg_cnt = 0;
 
-	printk("\r\nOpenAMP AST26xx remote demo started\r\n");
+	LOG_INF("OpenAMP AST26xx remote demo started");
 
 	rc = platform_init();
 	if (rc) {
-		printk("cannot initialize platform\n");
+		LOG_ERR("cannot initialize platform");
 		rc = -1;
 		goto task_end;
 	}
 
 	rpdev = platform_create_rpmsg_vdev(0, VIRTIO_DEV_SLAVE, NULL, new_service_cb);
 	if (!rpdev) {
-		printk("cannot create rpmsg virtio device\n");
+		LOG_ERR("cannot create rpmsg virtio device");
 		rc = -1;
 		goto task_end;
 	}
@@ -291,7 +301,7 @@ void app_task(void *arg1, void *arg2, void *arg3)
 			       RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
 			       rpmsg_recv_callback, NULL);
 	if (rc != 0)
-		printk("error while creating endpoint(%d)\n", rc);
+		LOG_ERR("error while creating endpoint(%d)", rc);
 
 	while (msg_cnt < 100) {
 		receive_message(&msg, &len);
@@ -303,12 +313,12 @@ void app_task(void *arg1, void *arg2, void *arg3)
 task_end:
 	cleanup_system();
 
-	printk("OpenAMP demo ended\n");
+	LOG_INF("OpenAMP demo ended");
 }
 
 void main(void)
 {
-	printk("Starting application thread!\n");
+	LOG_INF("Starting application thread!");
 	k_thread_create(&thread_data, thread_stack, APP_TASK_STACK_SIZE,
 			(k_thread_entry_t)app_task,
 			NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
