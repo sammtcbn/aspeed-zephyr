@@ -755,8 +755,11 @@
 			};
 		};
 
-		mbxctrl: swmbx-ctrl {
+		mbxctrl: swmbx-ctrl@7e7b0e00 {
 			compatible = "aspeed,swmbx-ctrl";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0x7e7b0e00 0x100>;
 			size = <256>;
 			status = "disabled";
 		};
