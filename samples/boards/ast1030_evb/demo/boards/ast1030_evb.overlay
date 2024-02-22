@@ -192,10 +192,6 @@
 	status = "okay";
 };
 
-&jtag0 {
-	status = "okay";
-};
-
 &jtag1 {
 	status = "okay";
 };
