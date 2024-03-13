@@ -14,6 +14,7 @@
 #include <init.h>
 #include <soc.h>
 #include <aspeed_util.h>
+#include <stdlib.h>
 
 #define ADC_CONTEXT_USES_KERNEL_TIMER
 #include "../adc_context.h"
@@ -78,7 +79,10 @@ static uint32_t aspeed_adc_read_raw(const struct device *dev, uint32_t channel)
 		(channel & 0x1) ?
 		adc_register->adc_data[channel >> 1].fields.data_even :
 		adc_register->adc_data[channel >> 1].fields.data_odd;
-	raw_data += priv->cv;
+	if (priv->cv < 0 && raw_data < abs(priv->cv))
+		raw_data = 0;
+	else
+		raw_data += priv->cv;
 	LOG_DBG("%u\n", raw_data);
 	return raw_data;
 }
