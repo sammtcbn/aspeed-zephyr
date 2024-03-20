@@ -1753,10 +1753,8 @@ void aspeed_i2c_slave_byte_irq(const struct device *dev, uint32_t i2c_base, uint
 			slave_cb->stop(data->slave_cfg);
 		}
 
-		if (sts & AST_I2CS_TX_NAK) {
-			/* clear record slave address */
-			data->slave_addr_last = 0x0;
-		}
+		/* clear record slave address */
+		data->slave_addr_last = 0x0;
 
 		if (sts & AST_I2CS_SLAVE_MATCH) {
 			/* Don't handle this match for current condition*/
