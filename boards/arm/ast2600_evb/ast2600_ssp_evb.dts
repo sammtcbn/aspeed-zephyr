@@ -22,7 +22,6 @@
 		device_type = "memory";
 		reg = <0x1000000 DT_SIZE_K(16384)>;
 		zephyr,memory-region = "RAM_NC";
-		zephyr,memory-region-mpu = "RAM";
 	};
 };
 
