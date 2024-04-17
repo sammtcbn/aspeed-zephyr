@@ -173,6 +173,60 @@ static int cmd_gpio_blink(const struct shell *sh,
 	return 0;
 }
 
+struct gpio_callback gpio_cb[32];
+static void event_print(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins)
+{
+	uint8_t gpio_pin = 31 - __builtin_clz(pins);
+
+	LOG_INF("%s: %s pin %d", __func__, dev->name, gpio_pin);
+	gpio_pin_interrupt_configure(dev, gpio_pin, GPIO_INT_DISABLE);
+	gpio_remove_callback(dev, &gpio_cb[gpio_pin]);
+}
+
+static int cmd_gpio_listen(const struct shell *shell, size_t argc, char **argv)
+{
+	const struct device *dev;
+	uint8_t index = 0U;
+	gpio_flags_t flag = 0;
+	int rc;
+
+	if (isdigit((unsigned char)argv[args_indx.index][0]) &&
+	    isalpha((unsigned char)argv[args_indx.mode][0])) {
+		index = (uint8_t)atoi(argv[args_indx.index]);
+		if (!strcmp(argv[args_indx.mode], "levelH")) {
+			flag = GPIO_INT_MODE_LEVEL | GPIO_INT_TRIG_HIGH;
+		} else if (!strcmp(argv[args_indx.mode], "levelL")) {
+			flag = GPIO_INT_MODE_LEVEL | GPIO_INT_TRIG_LOW;
+		} else if (!strcmp(argv[args_indx.mode], "edgeH")) {
+			flag = GPIO_INT_MODE_EDGE | GPIO_INT_TRIG_HIGH;
+		} else if (!strcmp(argv[args_indx.mode], "edgeL")) {
+			flag = GPIO_INT_MODE_EDGE | GPIO_INT_TRIG_LOW;
+		} else if (!strcmp(argv[args_indx.mode], "edgeB")) {
+			flag = GPIO_INT_MODE_EDGE | GPIO_INT_TRIG_BOTH;
+		} else {
+			return 0;
+		}
+	} else {
+		shell_error(shell, "Wrong parameters for conf");
+		return -ENOTSUP;
+	}
+	dev = device_get_binding(argv[args_indx.port]);
+
+	if (dev) {
+		index = (uint8_t)atoi(argv[2]);
+		shell_print(shell, "Listen to %s pin %d mode %s", argv[args_indx.port], index,
+			    argv[args_indx.mode]);
+		rc = gpio_pin_interrupt_configure(dev, index, flag);
+		if (rc) {
+			return rc;
+		}
+		gpio_init_callback(&gpio_cb[index], event_print, BIT(index));
+		rc = gpio_add_callback(dev, &gpio_cb[index]);
+	}
+
+	return 0;
+}
+
 #ifdef CONFIG_GPIO_ASPEED_SGPIOM
 static int cmd_sgpio_passthrough(const struct shell *sh, size_t argc, char **argv)
 {
@@ -194,6 +248,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_gpio,
 			       SHELL_CMD_ARG(get, NULL, "Get GPIO value", cmd_gpio_get, 3, 0),
 			       SHELL_CMD_ARG(set, NULL, "Set GPIO", cmd_gpio_set, 4, 0),
 			       SHELL_CMD_ARG(blink, NULL, "Blink GPIO", cmd_gpio_blink, 3, 0),
+			       SHELL_CMD_ARG(listen, NULL, "Listen GPIO", cmd_gpio_listen, 4, 0),
 #ifdef CONFIG_GPIO_ASPEED_SGPIOM
 			       SHELL_CMD_ARG(passthrough, NULL, "SGPIO passthough",
 					     cmd_sgpio_passthrough, 3, 0),
