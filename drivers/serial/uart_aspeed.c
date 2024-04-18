@@ -8,6 +8,7 @@
 #include <soc.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/drivers/clock_control.h>
+#include <zephyr/drivers/pinctrl.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -156,6 +157,7 @@ struct uart_aspeed_config {
 	uintptr_t base;
 	const struct device *clock_dev;
 	const clock_control_subsys_t clk_id;
+	const struct pinctrl_dev_config *pcfg;
 
 	bool virt;
 	uint32_t virt_port;
@@ -824,6 +826,7 @@ static int uart_aspeed_init(const struct device *dev)
 	data->cb_data = NULL;
 
 	clock_control_on(dev_cfg->clock_dev, dev_cfg->clk_id);
+	pinctrl_apply_state(dev_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 
 	if (dev_cfg->dma) {
 		udma_aspeed_init();
@@ -913,6 +916,7 @@ static const struct uart_driver_api uart_aspeed_driver_api = {
 };
 
 #define UART_ASPEED_INIT(n)									\
+	PINCTRL_DT_INST_DEFINE(n);                                                              \
 												\
 	static struct uart_aspeed_data uart_aspeed_data_##n;					\
 												\
@@ -935,6 +939,7 @@ static const struct uart_driver_api uart_aspeed_driver_api = {
 		.base = DT_INST_REG_ADDR(n),							\
 		.clock_dev = DEVICE_DT_GET(DT_INST_CLOCKS_CTLR(n)),				\
 		.clk_id = (clock_control_subsys_t)DT_INST_CLOCKS_CELL(n, clk_id),		\
+		.pcfg = PINCTRL_DT_INST_DEV_CONFIG_GET(n),                                      \
 		.virt = DT_INST_PROP_OR(n, virtual, 0),						\
 		.virt_port = DT_INST_PROP_OR(n, virtual_port, 0),				\
 		.virt_sirq = DT_INST_PROP_OR(n, virtual_sirq, 0),				\
