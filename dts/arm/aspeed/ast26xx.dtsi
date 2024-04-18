@@ -66,9 +66,14 @@
 				     <196 AST10X0_IRQ_DEFAULT_PRIORITY>;
 		};
 
+		udma: udma@7e79e000 {
+			compatible = "aspeed,udma";
+			interrupts = <INTR_UARTDMA AST10X0_IRQ_DEFAULT_PRIORITY>;
+			reg = <0x7e79e000 0x1000>;
+		};
+
 		uart11: serial@7e790500 {
-			compatible = "ns16550";
-			reg-shift = <2>;
+			compatible = "aspeed,uart";
 			reg = <0x7e790500 0x100>;
 			interrupts = <INTR_UART11 AST10X0_IRQ_DEFAULT_PRIORITY>;
 			clocks = <&sysclk ASPEED_CLK_GATE_UART11CLK>;
@@ -83,4 +88,4 @@
 	arm,num-irq-priority-bits = <3>;
 };
 
-#include "ast10x0-pinctrl.dtsi"
+#include "ast26xx-pinctrl.dtsi"
