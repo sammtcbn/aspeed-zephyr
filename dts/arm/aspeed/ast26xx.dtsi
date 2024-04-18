@@ -72,6 +72,82 @@
 			reg = <0x7e79e000 0x1000>;
 		};
 
+		gpio0: gpio@7e780000 {
+			compatible = "aspeed,gpio";
+			reg = <0x7e780000 0x400>;
+			interrupts = <72 AST10X0_IRQ_DEFAULT_PRIORITY>;
+			clocks = <&sysclk ASPEED_CLK_APB2>;
+			gpio0_a_d: gpio0_a_d {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <0>;
+			};
+
+			gpio0_e_h: gpio0_e_h {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <32>;
+			};
+
+			gpio0_i_l: gpio0_i_l {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <64>;
+			};
+
+			gpio0_m_p: gpio0_m_p {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <96>;
+			};
+
+			gpio0_q_t: gpio0_q_t {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				aspeed,cmd-src = <2>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				pin-offset = <128>;
+			};
+
+			gpio0_u_x: gpio0_u_x {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <32>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <160>;
+			};
+
+			gpio0_y_z: gpio0_y_z {
+				#gpio-cells = <2>;
+				gpio-controller;
+				ngpios = <16>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				aspeed,cmd-src = <2>;
+				pin-offset = <192>;
+			};
+		};
+
 		uart11: serial@7e790500 {
 			compatible = "aspeed,uart";
 			reg = <0x7e790500 0x100>;
