@@ -174,13 +174,13 @@ static int cmd_gpio_blink(const struct shell *sh,
 }
 
 struct gpio_callback gpio_cb[32];
-static void event_print(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins)
+static void event_print(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
 	uint8_t gpio_pin = 31 - __builtin_clz(pins);
 
 	LOG_INF("%s: %s pin %d", __func__, dev->name, gpio_pin);
 	gpio_pin_interrupt_configure(dev, gpio_pin, GPIO_INT_DISABLE);
-	gpio_remove_callback(dev, &gpio_cb[gpio_pin]);
+	gpio_remove_callback(dev, cb);
 }
 
 static int cmd_gpio_listen(const struct shell *shell, size_t argc, char **argv)
