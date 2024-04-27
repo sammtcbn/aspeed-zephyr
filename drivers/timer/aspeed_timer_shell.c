@@ -62,6 +62,9 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 		return -ENODEV;
 	}
 
+	conf.timer_type = 0;
+	conf.millisec = 0;
+
 	while ((c = getopt(argc - 1, &argv[1], "hp:t:")) != -1) {
 		state = getopt_state_get();
 		switch (c) {
