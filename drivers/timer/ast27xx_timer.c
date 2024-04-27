@@ -49,7 +49,8 @@ int timer_aspeed_stop(const struct device *dev)
 	struct timer_aspeed_config *config = DEV_CFG(dev);
 
 	/* Write CTRL_CLR to clear CTRL bits */
-	sys_write32(TIMER_CTRL_EN, config->base + TIMER_CTRL_CLR);
+	sys_write32(TIMER_CTRL_EN | TIMER_CTRL_OVFL_INT | TIMER_CTRL_INTR_STATUS,
+		    config->base + TIMER_CTRL_CLR);
 
 	/* clear reload value then the HW will clear counter automatically */
 	sys_write32(0, config->base + TIMER_RELOAD_VALUE);
@@ -64,7 +65,7 @@ int timer_aspeed_start(const struct device *dev, struct aspeed_timer_user_config
 	uint32_t reload, reg;
 
 	/* suspend timer */
-	sys_write32(TIMER_CTRL_EN, config->base + TIMER_CTRL_CLR);
+	timer_aspeed_stop(dev);
 
 	/* configure timer, not support 1st & 2nd matching value for now */
 	reload = user_config->millisec * obj->tick_per_microsec * 1000;
@@ -102,8 +103,6 @@ static void timer_aspeed_isr(const struct device *dev)
 	struct timer_aspeed_obj *obj = DEV_DATA(dev);
 	struct timer_aspeed_config *config = DEV_CFG(dev);
 
-	sys_write32(TIMER_CTRL_INTR_STATUS, config->base + TIMER_CTRL_CLR);
-
 	/* disable timer if not auto-reload */
 	if (!obj->auto_reload) {
 		timer_aspeed_stop(dev);
@@ -112,6 +111,8 @@ static void timer_aspeed_isr(const struct device *dev)
 	if (obj->callback) {
 		obj->callback(obj->user_data);
 	}
+
+	sys_write32(TIMER_CTRL_INTR_STATUS, config->base + TIMER_CTRL_CLR);
 }
 
 static int timer_aspeed_init(const struct device *dev)
