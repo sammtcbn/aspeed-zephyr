@@ -65,6 +65,70 @@
 			};
 		};
 
+		timer0: timer@72c10000 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10000 0x40>;
+			interrupts = <16 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer1: timer@72c10040 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10040 0x40>;
+			interrupts = <17 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer2: timer@72c10080 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10080 0x40>;
+			interrupts = <18 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer3: timer@72c100c0 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c100c0 0x40>;
+			interrupts = <19 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer4: timer@72c10100 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10100 0x40>;
+			interrupts = <20 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer5: timer@72c10140 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10140 0x40>;
+			interrupts = <21 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer6: timer@72c10180 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c10180 0x40>;
+			interrupts = <22 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
+		timer7: timer@72c101c0 {
+			compatible = "aspeed,ast27xx-timer";
+			reg = <0x72c101c0 0x40>;
+			interrupts = <23 1>;
+			clocks = <&sysclk0 AST2700_CPU_CLK_APB>;
+			status = "disabled";
+		};
+
 		uart4: serial@72c1a000 {
 			compatible = "ns16550";
 			reg = <0x72c1a000 0x1000>;
