@@ -10,7 +10,14 @@ config TIMER_ASPEED
 	help
 	  Say "y" to enable the driver of the Aspeed general purpose timer.
 
-if TIMER_ASPEED
+config TIMER_ASPEED_AST27XX
+	bool "Aspeed ast27xx general purpose timer"
+	depends on DT_HAS_ASPEED_AST27XX_TIMER_ENABLED
+	default y
+	help
+	  Say "y" to enable the driver of the Aspeed ast27xx general purpose timer.
+
+if TIMER_ASPEED || TIMER_ASPEED_AST27XX
 config TIMER_ASPEED_SHELL
 	bool "Shell commands for Aspeed timer"
 	default y
