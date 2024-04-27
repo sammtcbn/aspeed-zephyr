@@ -14,6 +14,8 @@ if TIMER_ASPEED
 config TIMER_ASPEED_SHELL
 	bool "Shell commands for Aspeed timer"
 	default y
+	depends on SHELL
+	select SHELL_GETOPT
 	help
 	  Say "y" to enanle the shell commands for the Aspeed general purpose timer
 endif
