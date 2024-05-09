@@ -21,8 +21,7 @@
 		};
 	};
 
-	sdram0: memory@0 {
-		compatible = "mmio-dram";
+	dram_ro_region: memory@0 {
 		device_type = "memory";
 	};
 

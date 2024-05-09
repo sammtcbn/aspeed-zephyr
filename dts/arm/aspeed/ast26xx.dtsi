@@ -23,7 +23,7 @@
 		};
 	};
 
-	sdram0: memory@0 {
+	dram_ro_region: memory@0 {
 		device_type = "memory";
 	};
 

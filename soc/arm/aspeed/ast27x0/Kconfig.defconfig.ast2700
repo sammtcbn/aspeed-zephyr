@@ -7,6 +7,4 @@ if SOC_AST2700
 config NUM_IRQS
 	default 240
 
-config SRAM_RO_SIZE
-	default 128
 endif # SOC_AST2700

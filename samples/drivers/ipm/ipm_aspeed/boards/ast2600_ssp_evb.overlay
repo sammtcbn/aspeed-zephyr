@@ -28,7 +28,7 @@
 	};
 };
 
-&sdram1 {
+&dram_nc_region {
 	reg = <0x1000000 DT_SIZE_K(16380)>;
 };
 
