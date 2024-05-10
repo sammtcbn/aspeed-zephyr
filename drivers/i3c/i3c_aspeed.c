@@ -287,6 +287,7 @@ static int aspeed_i3c_init(const struct device *dev);
 #define BUS_FREE_TIMING			0xd4
 #define   BUS_I3C_AVAILABLE_TIME	GENMASK(31, 16)
 #define   BUS_I3C_MST_FREE		GENMASK(15, 0)
+#define BUS_IDLE_TIMING			0xd8
 
 #define DEV_ADDR_TABLE_LEGACY_I2C_DEV	BIT(31)
 #define DEV_ADDR_TABLE_DYNAMIC_ADDR	GENMASK(23, 16)
@@ -516,6 +517,8 @@ static void aspeed_i3c_disable(struct aspeed_i3c_data *data)
 
 	if (data->common.ctrl_config.is_secondary) {
 		aspeed_i3c_enter_sw_mode(data);
+		/* Clear the internal busy status */
+		aspeed_i3c_gen_internal_stop(data);
 	}
 
 	reg &= ~DEV_CTRL_ENABLE;
@@ -523,7 +526,9 @@ static void aspeed_i3c_disable(struct aspeed_i3c_data *data)
 
 	if (data->common.ctrl_config.is_secondary) {
 		aspeed_i3c_toggle_scl_in(data, 8);
-		aspeed_i3c_gen_internal_stop(data);
+		reg = sys_read32(config->base + DEVICE_CTRL);
+		if (reg & DEV_CTRL_ENABLE)
+			LOG_ERR("Failed to disable controller");
 		aspeed_i3c_exit_sw_mode(data);
 	}
 }
@@ -540,6 +545,8 @@ static void aspeed_i3c_enable(struct aspeed_i3c_data *data)
 		reg &= ~DEV_CTRL_AUTO_HJ_DISABLE;
 		reg |= DEV_CTRL_IBI_PAYLOAD_EN;
 		aspeed_i3c_enter_sw_mode(data);
+		/* Clear the internal busy status */
+		aspeed_i3c_gen_internal_stop(data);
 	} else {
 		reg |= DEV_CTRL_IBA_INCLUDE;
 	}
@@ -550,6 +557,7 @@ static void aspeed_i3c_enable(struct aspeed_i3c_data *data)
 
 		reg = sys_read32(config->base + BUS_FREE_TIMING);
 		wait_cnt = FIELD_GET(BUS_I3C_AVAILABLE_TIME, reg);
+		wait_cnt = MAX(wait_cnt, sys_read32(config->base + BUS_IDLE_TIMING));
 		wait_us = DIV_ROUND_UP(data->core_period * wait_cnt, NSEC_PER_USEC);
 		k_busy_wait(wait_us);
 
@@ -557,6 +565,7 @@ static void aspeed_i3c_enable(struct aspeed_i3c_data *data)
 
 		reg = sys_read32(config->base + DEVICE_CTRL);
 		if (!(reg & DEV_CTRL_ENABLE)) {
+			LOG_ERR("Failed to enable controller");
 			goto out;
 		}
 		aspeed_i3c_gen_internal_stop(data);
