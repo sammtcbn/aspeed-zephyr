@@ -14,4 +14,132 @@
 		ball = <T24>;
 		sig_descs = <SIG_DESC_SET(0x430, 23)>;
 	};
+	/omit-if-no-ref/ pin_scl1: pin_scl1 {
+		ball = <B20>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 8) SIG_DESC_CLR(0x418, 8)>;
+	};
+	/omit-if-no-ref/ pin_sda1: pin_sda1 {
+		ball = <A20>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 9) SIG_DESC_CLR(0x418, 9)>;
+	};
+	/omit-if-no-ref/ pin_scl2: pin_scl2 {
+		ball = <E19>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 10) SIG_DESC_CLR(0x418, 10)>;
+	};
+	/omit-if-no-ref/ pin_sda2: pin_sda2 {
+		ball = <D20>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 11) SIG_DESC_CLR(0x418, 11)>;
+	};
+	/omit-if-no-ref/ pin_scl3: pin_scl3 {
+		ball = <C19>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 12) SIG_DESC_CLR(0x418, 12)>;
+	};
+	/omit-if-no-ref/ pin_sda3: pin_sda3 {
+		ball = <A19>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 13) SIG_DESC_CLR(0x418, 13)>;
+	};
+	/omit-if-no-ref/ pin_scl4: pin_scl4 {
+		ball = <C20>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 14) SIG_DESC_CLR(0x418, 14)>;
+	};
+	/omit-if-no-ref/ pin_sda4: pin_sda4 {
+		ball = <D19>;
+		sig_descs = <SIG_DESC_SET(0x4B8, 15) SIG_DESC_CLR(0x418, 15)>;
+	};
+	/omit-if-no-ref/ pin_scl5: pin_scl5 {
+		ball = <A11>;
+		sig_descs = <SIG_DESC_SET(0x418, 16)>;
+	};
+	/omit-if-no-ref/ pin_sda5: pin_sda5 {
+		ball = <C11>;
+		sig_descs = <SIG_DESC_SET(0x418, 17)>;
+	};
+	/omit-if-no-ref/ pin_scl6: pin_scl6 {
+		ball = <D12>;
+		sig_descs = <SIG_DESC_SET(0x418, 18)>;
+	};
+	/omit-if-no-ref/ pin_sda6: pin_sda6 {
+		ball = <E13>;
+		sig_descs = <SIG_DESC_SET(0x418, 19)>;
+	};
+	/omit-if-no-ref/ pin_scl7: pin_scl7 {
+		ball = <D11>;
+		sig_descs = <SIG_DESC_SET(0x418, 20)>;
+	};
+	/omit-if-no-ref/ pin_sda7: pin_sda7 {
+		ball = <E11>;
+		sig_descs = <SIG_DESC_SET(0x418, 21)>;
+	};
+	/omit-if-no-ref/ pin_scl8: pin_scl8 {
+		ball = <F13>;
+		sig_descs = <SIG_DESC_SET(0x418, 22)>;
+	};
+	/omit-if-no-ref/ pin_sda8: pin_sda8 {
+		ball = <E12>;
+		sig_descs = <SIG_DESC_SET(0x418, 23)>;
+	};
+	/omit-if-no-ref/ pin_scl9: pin_scl9 {
+		ball = <D15>;
+		sig_descs = <SIG_DESC_SET(0x418, 24)>;
+	};
+	/omit-if-no-ref/ pin_sda9: pin_sda9 {
+		ball = <A14>;
+		sig_descs = <SIG_DESC_SET(0x418, 25)>;
+	};
+	/omit-if-no-ref/ pin_scl10: pin_scl10 {
+		ball = <E15>;
+		sig_descs = <SIG_DESC_SET(0x418, 26)>;
+	};
+	/omit-if-no-ref/ pin_sda10: pin_sda10 {
+		ball = <A13>;
+		sig_descs = <SIG_DESC_SET(0x418, 27)>;
+	};
+	/omit-if-no-ref/ pin_scl11: pin_scl11 {
+		ball = <M24>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 0) SIG_DESC_CLR(0x410, 0)>;
+	};
+	/omit-if-no-ref/ pin_sda11: pin_sda11 {
+		ball = <M25>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 1) SIG_DESC_CLR(0x410, 1)>;
+	};
+	/omit-if-no-ref/ pin_scl12: pin_scl12 {
+		ball = <L26>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 2) SIG_DESC_CLR(0x410, 2)>;
+	};
+	/omit-if-no-ref/ pin_sda12: pin_sda12 {
+		ball = <K24>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 3) SIG_DESC_CLR(0x410, 3)>;
+	};
+	/omit-if-no-ref/ pin_scl13: pin_scl13 {
+		ball = <K26>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 4) SIG_DESC_CLR(0x410, 4)>;
+	};
+	/omit-if-no-ref/ pin_sda13: pin_sda13 {
+		ball = <L24>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 5) SIG_DESC_CLR(0x410, 5)>;
+	};
+	/omit-if-no-ref/ pin_scl14: pin_scl14 {
+		ball = <L23>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 6) SIG_DESC_CLR(0x410, 6)>;
+	};
+	/omit-if-no-ref/ pin_sda14: pin_sda14 {
+		ball = <K25>;
+		sig_descs = <SIG_DESC_SET(0x4B0, 7) SIG_DESC_CLR(0x410, 7)>;
+	};
+	/omit-if-no-ref/ pin_scl15: pin_scl15 {
+		ball = <D18>;
+		sig_descs = <SIG_DESC_SET(0x4B4, 28) SIG_DESC_CLR(0x414, 28)>;
+	};
+	/omit-if-no-ref/ pin_sda15: pin_sda15 {
+		ball = <B17>;
+		sig_descs = <SIG_DESC_SET(0x4B4, 29) SIG_DESC_CLR(0x414, 29)>;
+	};
+	/omit-if-no-ref/ pin_scl16: pin_scl16 {
+		ball = <C17>;
+		sig_descs = <SIG_DESC_SET(0x4B4, 30) SIG_DESC_CLR(0x414, 30)>;
+	};
+	/omit-if-no-ref/ pin_sda16: pin_sda16 {
+		ball = <E18>;
+		sig_descs = <SIG_DESC_SET(0x4B4, 31) SIG_DESC_CLR(0x414, 31)>;
+	};
 };
