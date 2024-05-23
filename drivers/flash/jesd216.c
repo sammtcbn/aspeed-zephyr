@@ -145,7 +145,7 @@ int jesd216_4bai_read_support(uint32_t *jedec_4bai_dwd,
 	for (i = 0; i < JESD216_4BAI_NUM_READ_TYPES; i++) {
 		if (sfdp_4bai_reads[i].mode == mode) {
 			if (sys_le32_to_cpu(jedec_4bai_dwd[0]) &
-				sfdp_4bai_reads[i].support_bit) {
+				BIT(sfdp_4bai_reads[i].support_bit)) {
 				*cmd = sfdp_4bai_reads[i].opcode;
 				rv = 0;
 				break;
@@ -166,7 +166,7 @@ int jesd216_4bai_pp_support(uint32_t *jedec_4bai_dwd,
 	for (i = 0; i < JESD216_4BAI_NUM_WRITE_TYPES; i++) {
 		if (sfdp_4bai_pps[i].mode == mode) {
 			if (sys_le32_to_cpu(jedec_4bai_dwd[0]) &
-				sfdp_4bai_pps[i].support_bit) {
+				BIT(sfdp_4bai_pps[i].support_bit)) {
 				*cmd = sfdp_4bai_pps[i].opcode;
 				rv = 0;
 				break;
