@@ -703,11 +703,8 @@ static int spi_nor_cf1_bit1_config(const struct device *dev)
 int spi_nor_sr_cr_bit1_config(const struct device *dev)
 {
 	int ret;
-	struct spi_nor_data *data = dev->data;
 	uint8_t sr_cr[2];
-
-	if (data->jedec_id[0] == SPI_NOR_MFR_ID_WINBOND)
-		return spi_nor_cf1_bit1_config(dev);
+	uint8_t sr_golden;
 
 	ret = spi_nor_rdsr(dev);
 	if (ret < 0)
@@ -719,6 +716,17 @@ int spi_nor_sr_cr_bit1_config(const struct device *dev)
 	ret = spi_nor_wr_sr_cr(dev, sr_cr);
 	if (ret)
 		return ret;
+
+	sr_golden = sr_cr[0];
+
+	ret = spi_nor_rdsr(dev);
+	if (ret < 0)
+		return ret;
+
+	if ((uint8_t)ret != sr_golden) {
+		LOG_ERR("Fail to config SR_CR");
+		return -ENOTSUP;
+	}
 
 	return 0;
 }
