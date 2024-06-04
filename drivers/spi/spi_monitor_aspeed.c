@@ -192,7 +192,6 @@ struct aspeed_spim_config {
 	bool extra_clk_en;
 	bool force_rel_flash_rst;
 	const struct device *parent;
-	const struct device *flash_dev;
 	const struct gpio_dt_spec *ext_mux_sel_gpios;
 	uint32_t ext_mux_sel_gpio_num;
 	uint32_t ext_mux_sel_delay_us;
@@ -1227,38 +1226,6 @@ void spim_monitor_enable(const struct device *dev, bool enable)
 	spim_passthrough_config(dev, SPIM_SINGLE_PASSTHROUGH, pt_en);
 }
 
-void spim_rst_flash(const struct device *dev, uint32_t rst_duration_ms)
-{
-	uint32_t val;
-	const struct aspeed_spim_config *config = dev->config;
-	const struct device *parent_dev = config->parent;
-	uint32_t bit_off = 1 << (config->ctrl_idx - 1);
-
-	if (rst_duration_ms == 0)
-		rst_duration_ms = 500;
-
-	/* Using SCU0F0 to enable flash rst
-	 * SCU0F0[23:20]: Reset source selection
-	 * SCU0F0[27:24]: Enable reset signal output
-	 */
-	val = (bit_off << 20) | (bit_off << 24);
-	spim_scu_ctrl_set(parent_dev, val, val);
-
-	/* SCU0F0[19:16]: output value */
-	/* reset flash */
-	val = bit_off << 16;
-	spim_scu_ctrl_clear(parent_dev, val);
-
-	k_busy_wait(rst_duration_ms * 1000);
-
-	/* release reset */
-	spim_scu_ctrl_set(parent_dev, val, val);
-
-	spi_nor_config_4byte_mode(config->flash_dev, false);
-
-	k_busy_wait(5000); /* 5ms */
-}
-
 void spim_release_flash_rst(const struct device *dev)
 {
 	uint32_t val;
@@ -1489,7 +1456,6 @@ static int aspeed_spi_monitor_common_init(const struct device *dev)
 		.ctrl_idx = DT_REG_ADDR(node_id),	\
 		.extra_clk_en = DT_PROP(node_id, extra_clk),	\
 		.parent = DEVICE_DT_GET(DT_PARENT(node_id)),	\
-		.flash_dev = DEVICE_DT_GET(DT_PHANDLE(node_id, flash_device)),	\
 		.ext_mux_sel_default = DT_PROP_OR(node_id, ext_mux_sel, 0),	\
 		.ext_mux_sel_gpios = spim_ext_mux_sel_gpios_##node_id,	\
 		.ext_mux_sel_delay_us = DT_PROP_OR(node_id, ext_mux_sel_delay_us, 0),	\

@@ -85,11 +85,6 @@ child-binding:
     pinctrl-0:
       required: true
 
-    flash-device:
-      type: phandle
-      required: true
-      description: flash device controlled by the SPI monitor.
-
     ext-mux-sel:
       type: int
       required: false
