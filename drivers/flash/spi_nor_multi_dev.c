@@ -20,6 +20,7 @@
 #include <string.h>
 #include <logging/log.h>
 
+#include <drivers/misc/aspeed/pfr_aspeed.h>
 #include <drivers/spi.h>
 #include <drivers/spi_nor.h>
 #include <drivers/jesd216.h>
@@ -50,6 +51,8 @@ struct spi_nor_config {
 	uint32_t spi_max_buswidth;
 	uint32_t spi_ctrl_caps_mask;
 	uint32_t spi_nor_caps_mask;
+
+	const struct device *spi_monitor_ctrl;
 };
 
 /**
@@ -1671,6 +1674,45 @@ static void spi_nor_info_init_params(
 	data->page_size = 256;
 }
 
+#ifdef CONFIG_SPI_MONITOR_ASPEED
+static int spi_nor_spim_command_adjust(const struct device *dev)
+{
+	const struct spi_nor_config *cfg = dev->config;
+	struct spi_nor_data *data = dev->data;
+	const struct device *spim_dev = cfg->spi_monitor_ctrl;
+	int ret = 0;
+	int idx;
+
+	if (!spim_dev)
+		return ret;
+
+	switch (data->jedec_id[0]) {
+	case SPI_NOR_MFR_ID_WINBOND:
+	case SPI_NOR_MFR_ID_GIGADEVICE:
+		idx = spim_get_allow_cmd_slot(spim_dev, SPI_NOR_CMD_WINBOND_ENQPI, 0);
+		if (idx < 0)
+			break;
+
+		ret = spim_remove_allow_command(spim_dev, SPI_NOR_CMD_WINBOND_ENQPI);
+
+		break;
+	case SPI_NOR_MFR_ID_MXIC:
+		idx = spim_get_allow_cmd_slot(spim_dev, SPI_NOR_CMD_MXIC_ENQPI, 0);
+		if (idx < 0)
+			break;
+
+		ret = spim_remove_allow_command(spim_dev, SPI_NOR_CMD_MXIC_ENQPI);
+
+		break;
+	default:
+		/* do nothing */
+		break;
+	}
+
+	return ret;
+}
+#endif
+
 /**
  * @brief Configure the flash
  *
@@ -1797,6 +1839,14 @@ static int spi_nor_configure(const struct device *dev)
 		}
 	}
 
+#ifdef CONFIG_SPI_MONITOR_ASPEED
+	rc = spi_nor_spim_command_adjust(dev);
+	if (rc != 0) {
+		ret = -EINVAL;
+		goto end;
+	}
+#endif
+
 	LOG_DBG("%s: %d MB flash", dev->name, dev_flash_size(dev) >> 20);
 	LOG_DBG("bus_width: %d, cap: %08x", cfg->spi_max_buswidth, data->cap_mask);
 	LOG_DBG("read: %08x, write: %08x, erase: %08x",
@@ -1875,6 +1925,11 @@ static const struct flash_driver_api spi_nor_api = {
 			DT_PROP_OR(DT_PARENT(DT_INST(n, DT_DRV_COMPAT)),	\
 				spi_ctrl_caps_mask, 0),	\
 		.spi_nor_caps_mask = DT_INST_PROP_OR(n, spi_nor_caps_mask, 0),	\
+		.spi_monitor_ctrl = COND_CODE_1(DT_NODE_HAS_PROP(DT_INST(n, DT_DRV_COMPAT),	\
+								 spi_monitor_ctrl),	\
+						DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n,	\
+							      spi_monitor_ctrl,	\
+							      0)), NULL),	\
 	};	\
 	static struct spi_nor_data spi_nor_data_##n = {	\
 		.dev_name = DT_INST_BUS_LABEL(n),	\

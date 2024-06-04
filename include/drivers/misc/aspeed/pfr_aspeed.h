@@ -116,6 +116,8 @@ enum addr_priv_op {
 };
 
 void spim_dump_allow_command_table(const struct device *dev);
+int spim_get_allow_cmd_slot(const struct device *dev,
+			    uint8_t cmd, uint32_t start_off);
 int spim_add_allow_command(const struct device *dev, uint8_t cmd, uint32_t flag);
 int spim_remove_allow_command(const struct device *dev, uint8_t cmd);
 int spim_lock_allow_command_table(const struct device *dev, uint8_t cmd, uint32_t flag);

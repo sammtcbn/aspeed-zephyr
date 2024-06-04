@@ -633,8 +633,8 @@ static int spim_get_empty_allow_cmd_slot(const struct device *dev)
 	return -ENOSR;
 }
 
-static int spim_get_allow_cmd_slot(const struct device *dev,
-	uint8_t cmd, uint32_t start_off)
+int spim_get_allow_cmd_slot(const struct device *dev,
+			    uint8_t cmd, uint32_t start_off)
 {
 	const struct aspeed_spim_config *config = dev->config;
 	int idx;

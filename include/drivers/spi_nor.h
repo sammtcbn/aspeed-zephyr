@@ -70,6 +70,9 @@
 #define SPI_NOR_CMD_SRSTEN          0x66    /* reset enabled */
 #define SPI_NOR_CMD_SRST            0x99    /* trigger reset */
 
+#define SPI_NOR_CMD_MXIC_ENQPI      0x35
+#define SPI_NOR_CMD_WINBOND_ENQPI   0x38
+
 /* Page, sector, and block size are standard, not configurable. */
 #define SPI_NOR_PAGE_SIZE    0x0100U
 #define SPI_NOR_SECTOR_SIZE  0x1000U
