@@ -959,7 +959,9 @@ static int aspeed_spi_nor_transceive(const struct device *dev,
 						const struct spi_config *spi_cfg,
 						struct spi_nor_op_info op_info)
 {
+#ifdef CONFIG_SPI_DMA_SUPPORT_ASPEED
 	const struct aspeed_spi_config *config = dev->config;
+#endif
 	struct aspeed_spi_data *data = dev->data;
 	struct spi_context *ctx = &data->ctx;
 	int ret = 0;
