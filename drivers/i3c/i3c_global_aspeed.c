@@ -42,7 +42,8 @@ union i3c_global_reg0_s {
 		volatile uint32_t reserved0 : 2;		/* bit[27:26] */
 		volatile uint32_t sda_pullup_en_2k : 1;		/* bit[28] */
 		volatile uint32_t sda_pullup_en_750 : 1;	/* bit[29] */
-		volatile uint32_t reserved1 : 2;		/* bit[31:30] */
+		volatile uint32_t sda_in_deglitch : 1;		/* bit[30] */
+		volatile uint32_t reserved1 : 1;		/* bit[31] */
 	} fields;
 };
 
