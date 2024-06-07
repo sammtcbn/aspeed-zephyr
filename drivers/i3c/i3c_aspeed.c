@@ -28,6 +28,7 @@ static int aspeed_i3c_init(const struct device *dev);
 
 /* Aspeed-specific global register set */
 #define ASPEED_I3CG_REG0(x)		(((x) * 0x10) + 0x10)
+#define   I3CG_REG0_SDA_IN_DEGLITCH	BIT(30)
 #define   I3CG_REG0_SDA_PULLUP		GENMASK(29, 28)
 #define     I3CG_REG0_SDA_PULLUP_2K	0x0
 #define     I3CG_REG0_SDA_PULLUP_750	0x2
