@@ -1377,6 +1377,7 @@ static int i3c_aspeed_enable(struct i3c_aspeed_obj *obj)
 	if (config->secondary) {
 		reg.fields.slave_auto_mode_adapt = 0;
 		i3c_aspeed_isolate_scl_sda(config->inst_id, true);
+		i3c_aspeed_gen_stop_to_internal(config->inst_id);
 	}
 	i3c_register->device_ctrl.value = reg.value;
 	if (config->secondary) {
