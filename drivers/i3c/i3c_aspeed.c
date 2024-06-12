@@ -1401,6 +1401,9 @@ static int i3c_aspeed_disable(struct i3c_aspeed_obj *obj)
 	struct i3c_aspeed_config *config = obj->config;
 	struct i3c_register_s *i3c_register = config->base;
 
+	if (!i3c_register->device_ctrl.fields.enable)
+		return 0;
+
 	if (config->secondary) {
 		i3c_aspeed_isolate_scl_sda(config->inst_id, true);
 		/* Clear the internal busy status */
