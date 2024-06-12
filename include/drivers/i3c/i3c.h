@@ -198,7 +198,6 @@ int i3c_aspeed_slave_send_sir(const struct device *dev, struct i3c_ibi_payload *
 
 /**
  * @brief slave device prepares the data for master private read transfer
- *
  * @param dev the I3C controller in slave mode
  * @param data pointer to the data structure to be read
  * @param ibi_notify pointer to the IBI notification structure (optional)
@@ -213,6 +212,15 @@ int i3c_aspeed_slave_send_sir(const struct device *dev, struct i3c_ibi_payload *
  */
 int i3c_aspeed_slave_put_read_data(const struct device *dev, struct i3c_slave_payload *data,
 				   struct i3c_ibi_payload *ibi_notify);
+
+/**
+ * @brief set the pid extra info of the i3c controller
+ *
+ * @param dev the I3C controller
+ * @param extra_info the extra info of the pid bits[11:0]
+ * @return
+ */
+int i3c_aspeed_set_pid_extra_info(const struct device *dev, uint16_t extra_info);
 
 /* common API */
 int i3c_master_send_enec(const struct device *master, uint8_t addr, uint8_t evt);
@@ -237,6 +245,7 @@ int i3c_master_send_getbcr(const struct device *master, uint8_t addr, uint8_t *b
 #define i3c_slave_put_read_data		i3c_aspeed_slave_put_read_data
 #define i3c_slave_get_dynamic_addr	i3c_aspeed_slave_get_dynamic_addr
 #define i3c_slave_get_event_enabling	i3c_aspeed_slave_get_event_enabling
+#define i3c_set_pid_extra_info          i3c_aspeed_set_pid_extra_info
 
 int i3c_jesd403_read(struct i3c_dev_desc *slave, uint8_t *addr, int addr_size, uint8_t *data,
 		     int data_size);
