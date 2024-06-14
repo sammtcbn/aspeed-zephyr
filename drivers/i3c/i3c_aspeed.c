@@ -569,7 +569,6 @@ static void aspeed_i3c_enable(struct aspeed_i3c_data *data)
 			LOG_ERR("Failed to enable controller");
 			goto out;
 		}
-		aspeed_i3c_gen_internal_stop(data);
 out:
 		aspeed_i3c_exit_sw_mode(data);
 	}
