@@ -1380,8 +1380,6 @@ static int i3c_aspeed_enable(struct i3c_aspeed_obj *obj)
 			i3c_aspeed_isolate_scl_sda(config->inst_id, false);
 			return -EACCES;
 		}
-		if (!config->assigned_addr)
-			i3c_aspeed_gen_stop_to_internal(config->inst_id);
 		i3c_aspeed_isolate_scl_sda(config->inst_id, false);
 	}
 	return 0;
