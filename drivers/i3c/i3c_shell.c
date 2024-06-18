@@ -212,9 +212,29 @@ static int cmd_do_daa(const struct shell *shell, size_t argc, char **argv)
 	return ret;
 }
 
+static const char hj_req_helper[] = "i3c hj_req <dev>                    | send HJ request";
+static int cmd_hj_req(const struct shell *shell, size_t argc, char **argv)
+{
+	const struct device *dev;
+	struct i3c_ibi request;
+	int ret;
+
+	dev = device_get_binding(argv[1]);
+	if (!dev) {
+		shell_error(shell, "I3C: Device %s not found.", argv[1]);
+		return -ENODEV;
+	}
+	request.ibi_type = I3C_IBI_HOTJOIN;
+
+	ret = i3c_ibi_raise(dev, &request);
+
+	return ret;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_i3c_cmds,
 			       SHELL_CMD(xfer, &dsub_device_name, priv_xfer_helper, cmd_priv_xfer),
 			       SHELL_CMD(tmq, &dsub_device_name, tmq_xfer_helper, cmd_tmq_xfer),
 			       SHELL_CMD(daa, &dsub_device_name, do_daa_helper, cmd_do_daa),
+			       SHELL_CMD(hj_req, &dsub_device_name, hj_req_helper, cmd_hj_req),
 			       SHELL_SUBCMD_SET_END);
 SHELL_CMD_REGISTER(i3c, &sub_i3c_cmds, "I3C commands", NULL);

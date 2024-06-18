@@ -70,6 +70,9 @@ static int aspeed_i3c_init(const struct device *dev);
 #define   DEV_ADDR_STATIC_ADDR		GENMASK(6, 0)
 
 #define HW_CAPABILITY			0x8
+#define HW_CAP_SLV_HJ			BIT(18)
+#define HW_CAP_HDR_TS			BIT(4)
+#define HW_CAP_HDR_DDR			BIT(3)
 #define COMMAND_QUEUE_PORT		0xc
 #define   COMMAND_PORT_PEC		BIT(31)
 #define   COMMAND_PORT_TOC		BIT(30)
@@ -188,6 +191,7 @@ static int aspeed_i3c_init(const struct device *dev);
 #define SLV_EVENT_CTRL			0x38
 #define   SLV_EVENT_CTRL_MWL_UPD	BIT(7)
 #define   SLV_EVENT_CTRL_MRL_UPD	BIT(6)
+#define   SLV_EVENT_CTRL_HJ_REQ		BIT(3)
 #define   SLV_EVENT_CTRL_SIR_EN		BIT(0)
 #define INTR_STATUS			0x3c
 #define INTR_STATUS_EN			0x40
@@ -542,6 +546,8 @@ static void aspeed_i3c_enable(struct aspeed_i3c_data *data)
 	reg = sys_read32(config->base + DEVICE_CTRL);
 	reg |= DEV_CTRL_ENABLE;
 	if (data->common.ctrl_config.is_secondary) {
+		/* Clear Hot-join request before enabling the controller*/
+		sys_write32(0, config->base + SLV_EVENT_CTRL);
 		/* enable hot-join */
 		reg &= ~DEV_CTRL_AUTO_HJ_DISABLE;
 		reg |= DEV_CTRL_IBI_PAYLOAD_EN;
@@ -1476,6 +1482,50 @@ static int aspeed_i3c_target_tx_write(const struct device *dev, uint8_t *buf,
 	return 0;
 }
 
+static int aspeed_i3c_target_ibi_raise_hj(const struct device *dev)
+{
+	struct aspeed_i3c_data *data = dev->data;
+	uintptr_t base = data->config->base;
+
+	if (!data->common.ctrl_config.is_secondary) {
+		LOG_ERR("%s: HJ requeset not supported", dev->name);
+		return -ENOTSUP;
+	}
+
+	if (!(sys_read32(base + HW_CAPABILITY) & HW_CAP_SLV_HJ)) {
+		LOG_ERR("%s: HJ not supported", dev->name);
+		return -ENOTSUP;
+	}
+
+	if (sys_read32(base + DEVICE_ADDR) & DEV_ADDR_DYNAMIC_ADDR_VALID) {
+		LOG_ERR("%s: DA already assigned", dev->name);
+		return -EACCES;
+	}
+
+	sys_write32(SLV_EVENT_CTRL_HJ_REQ, base + SLV_EVENT_CTRL);
+
+	return 0;
+}
+
+static int aspeed_i3c_target_ibi_raise(const struct device *dev, struct i3c_ibi *request)
+{
+	if (!request) {
+		return -EINVAL;
+	}
+
+	switch (request->ibi_type) {
+	case I3C_IBI_TARGET_INTR:
+		/* Aspeed I3C can support SIR, but not implemented here */
+	case I3C_IBI_CONTROLLER_ROLE_REQUEST:
+		/* TODO: Aspeed I3C can support CR, but not implemented yet */
+		return -ENOTSUP;
+	case I3C_IBI_HOTJOIN:
+		return aspeed_i3c_target_ibi_raise_hj(dev);
+	default:
+		return -EINVAL;
+	}
+}
+
 static int aspeed_i3c_target_pending_read_notify(const struct device *dev,
 						 uint8_t *buf, uint16_t len,
 						 struct i3c_ibi *notifier)
@@ -1876,6 +1926,7 @@ static struct i3c_driver_api aspeed_i3c_driver_api = {
 	.ibi_disable = aspeed_i3c_ibi_disable,
 #ifdef CONFIG_I3C_USE_IBI
 	.target_pending_read_notify = aspeed_i3c_target_pending_read_notify,
+	.ibi_raise = aspeed_i3c_target_ibi_raise,
 #endif
 	.target_tx_write = aspeed_i3c_target_tx_write,
 	.target_register = aspeed_i3c_target_register,
