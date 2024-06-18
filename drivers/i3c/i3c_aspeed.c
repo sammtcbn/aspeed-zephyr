@@ -70,6 +70,21 @@ union i3c_device_addr_s {
 	} fields;
 }; /* offset 0x04 */
 
+union i3c_hw_cap_s {
+	volatile uint32_t value;
+	struct {
+		volatile uint32_t role : 3;			/* bit[2:0] */
+		volatile uint32_t hdr_ddr : 1;			/* bit[3] */
+		volatile uint32_t hdr_ts : 1;			/* bit[4] */
+		volatile uint32_t clk_period : 6;		/* bit[10:5] */
+		volatile uint32_t hdr_tx_clk_period : 6;	/* bit[16:11] */
+		volatile uint32_t dma_en : 1;			/* bit[17] */
+		volatile uint32_t slv_hj_cap : 1;		/* bit[18] */
+		volatile uint32_t slv_ibi_cap : 1;		/* bit[19] */
+		volatile uint32_t reserved0 : 12;		/* bit[31:20] */
+	} fields;
+}; /* offset 0x08 */
+
 union i3c_device_cmd_queue_port_s {
 	volatile uint32_t value;
 
@@ -437,7 +452,7 @@ union i3c_dev_addr_tbl_s {
 struct i3c_register_s {
 	union i3c_device_ctrl_s device_ctrl;			/* 0x0 */
 	union i3c_device_addr_s device_addr;			/* 0x4 */
-	uint32_t hw_capability;					/* 0x8 */
+	union i3c_hw_cap_s hw_capability;			/* 0x8 */
 	union i3c_device_cmd_queue_port_s cmd_queue_port;	/* 0xc */
 	union i3c_device_resp_queue_port_s resp_queue_port;	/* 0x10 */
 	uint32_t rx_tx_data_port;				/* 0x14 */
@@ -1365,6 +1380,7 @@ static int i3c_aspeed_enable(struct i3c_aspeed_obj *obj)
 	reg.fields.hj_ack_ctrl = 1;
 	reg.fields.slave_ibi_payload_en = 1;
 	if (config->secondary) {
+		i3c_register->slave_event_ctrl.fields.hj_allowed = 0;
 		reg.fields.slave_auto_mode_adapt = 0;
 		i3c_aspeed_isolate_scl_sda(config->inst_id, true);
 		i3c_aspeed_gen_stop_to_internal(config->inst_id);
@@ -1865,6 +1881,31 @@ int i3c_aspeed_slave_send_sir(const struct device *dev, struct i3c_ibi_payload *
 		i3c_aspeed_init(dev);
 		return -EIO;
 	}
+
+	return 0;
+}
+
+int i3c_aspeed_slave_hj_req(const struct device *dev)
+{
+	struct i3c_aspeed_config *config = DEV_CFG(dev);
+	struct i3c_register_s *i3c_register = config->base;
+
+	if (!config->secondary) {
+		LOG_ERR("%s: HJ requeset not supported", dev->name);
+		return -ENOTSUP;
+	}
+
+	if (!(i3c_register->hw_capability.fields.slv_hj_cap)) {
+		LOG_ERR("%s: HJ not supported", dev->name);
+		return -ENOTSUP;
+	}
+
+	if (i3c_register->device_addr.fields.dynamic_addr_valid) {
+		LOG_ERR("%s: DA already assigned", dev->name);
+		return -EACCES;
+	}
+
+	i3c_register->slave_event_ctrl.fields.hj_allowed = 1;
 
 	return 0;
 }

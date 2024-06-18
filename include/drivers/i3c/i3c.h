@@ -197,6 +197,14 @@ int i3c_aspeed_slave_get_event_enabling(const struct device *dev, uint32_t *even
 int i3c_aspeed_slave_send_sir(const struct device *dev, struct i3c_ibi_payload *payload);
 
 /**
+ * @brief slave device sends Hot-join request
+ *
+ * @param dev the I3C controller in slave mode
+ * @return int 0 = success
+ */
+int i3c_aspeed_slave_hj_req(const struct device *dev);
+
+/**
  * @brief slave device prepares the data for master private read transfer
  * @param dev the I3C controller in slave mode
  * @param data pointer to the data structure to be read
@@ -242,6 +250,7 @@ int i3c_master_send_getbcr(const struct device *master, uint8_t addr, uint8_t *b
 #define i3c_master_send_entdaa		i3c_aspeed_master_send_entdaa
 #define i3c_slave_register		i3c_aspeed_slave_register
 #define i3c_slave_send_sir		i3c_aspeed_slave_send_sir
+#define i3c_slave_hj_req		i3c_aspeed_slave_hj_req
 #define i3c_slave_put_read_data		i3c_aspeed_slave_put_read_data
 #define i3c_slave_get_dynamic_addr	i3c_aspeed_slave_get_dynamic_addr
 #define i3c_slave_get_event_enabling	i3c_aspeed_slave_get_event_enabling
