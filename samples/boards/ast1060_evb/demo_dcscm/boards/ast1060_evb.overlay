@@ -72,6 +72,7 @@
 &spi1_cs0 {
 	spi-max-buswidth = <4>;
 	spi-max-frequency = <50000000>;
+	spi-monitor-ctrl = <&spim1>;
 	status = "okay";
 };
 
@@ -85,12 +86,14 @@
 &spi2_cs0 {
 	spi-max-buswidth = <1>;
 	spi-max-frequency = <25000000>;
+	spi-monitor-ctrl = <&spim3>;
 	status = "okay";
 };
 
 &spi2_cs1 {
 	spi-max-buswidth = <1>;
 	spi-max-frequency = <25000000>;
+	spi-monitor-ctrl = <&spim4>;
 	status = "okay";
 };
 

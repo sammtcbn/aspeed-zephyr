@@ -53,3 +53,10 @@ properties:
     description: |
       User can re-probe SPI flash at any time after
       booting up to system.
+
+  spi-monitor-ctrl:
+    type: phandle
+    required: false
+    description: |
+      phandle to SPI monitor device node.
+

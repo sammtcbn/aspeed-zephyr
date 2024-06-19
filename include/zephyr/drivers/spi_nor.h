@@ -79,6 +79,9 @@
 
 #define SPI_NOR_CMD_RDSFDP          0x5A    /* Read SFDP */
 
+#define SPI_NOR_CMD_MXIC_ENQPI      0x35
+#define SPI_NOR_CMD_WINBOND_ENQPI   0x38
+
 /* Flash octal opcodes */
 #define SPI_NOR_OCMD_SE         0x21DE  /* Octal Sector erase */
 #define SPI_NOR_OCMD_CE         0xC738  /* Octal Chip erase */
