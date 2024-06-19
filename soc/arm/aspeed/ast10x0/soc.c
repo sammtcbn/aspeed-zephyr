@@ -53,7 +53,7 @@ extern char __data_region_end[];
 #define SYS_PWR_RESET_FLAG	BIT(0)
 
 #define SYS_RESET_LOG_CLEAR(_bitmask, _reg)                                                        \
-	COND_CODE_0(CONFIG_HWINFO_ASPEED, (sys_write32(_bitmask, _reg);), ());
+	COND_CODE_1(CONFIG_HWINFO_ASPEED, (sys_write32(_bitmask, _reg);), ());
 
 #define BIT_WDT_SOC(x)		SYS_WDT##x##_SOC_RESET
 #define BIT_WDT_FULL(x)		SYS_WDT##x##_FULL_RESET
@@ -65,22 +65,22 @@ extern char __data_region_end[];
 		printk("RST: WDT%d ", x);                                                          \
 		if ((event_log) & BIT_WDT_SOC(x)) {                                                \
 			printk("SOC ");                                                            \
-			COND_CODE_0(CONFIG_HWINFO_ASPEED,                                          \
+			COND_CODE_1(CONFIG_HWINFO_ASPEED,                                          \
 				    (sys_write32(BIT_WDT_SOC(x), event_log_reg);), ());            \
 		}                                                                                  \
 		if ((event_log) & BIT_WDT_FULL(x)) {                                               \
 			printk("FULL ");                                                           \
-			COND_CODE_0(CONFIG_HWINFO_ASPEED,                                          \
+			COND_CODE_1(CONFIG_HWINFO_ASPEED,                                          \
 				    (sys_write32(BIT_WDT_FULL(x), event_log_reg);), ());           \
 		}                                                                                  \
 		if ((event_log) & BIT_WDT_ARM(x)) {                                                \
 			printk("ARM ");                                                            \
-			COND_CODE_0(CONFIG_HWINFO_ASPEED,                                          \
+			COND_CODE_1(CONFIG_HWINFO_ASPEED,                                          \
 				    (sys_write32(BIT_WDT_ARM(x), event_log_reg);), ());            \
 		}                                                                                  \
 		if ((event_log) & BIT_WDT_SW(x)) {                                                 \
 			printk("SW ");                                                             \
-			COND_CODE_0(CONFIG_HWINFO_ASPEED,                                          \
+			COND_CODE_1(CONFIG_HWINFO_ASPEED,                                          \
 				    (sys_write32(BIT_WDT_SW(x), event_log_reg);), ());             \
 		}                                                                                  \
 		printk("\n");                                                                      \
