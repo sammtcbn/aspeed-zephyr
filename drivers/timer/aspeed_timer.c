@@ -83,7 +83,7 @@ int timer_aspeed_start(const struct device *dev, struct aspeed_timer_user_config
 	sys_write32(reload, obj->cr_base + TIMER_RELOAD_VALUE);
 	sys_write32(0xffffffff, obj->cr_base + TIMER_1ST_MATCHING);
 	sys_write32(0xffffffff, obj->cr_base + TIMER_2ND_MATCHING);
-	LOG_DBG("reload: %d ms, %d tick\n", user_config->millisec, reload);
+	LOG_DBG("reload: %d ms, %u tick\n", user_config->millisec, reload);
 
 	obj->callback = user_config->callback;
 	obj->user_data = user_config->user_data;
