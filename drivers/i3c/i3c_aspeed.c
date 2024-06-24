@@ -2084,9 +2084,9 @@ int i3c_aspeed_master_send_entdaa(struct i3c_dev_desc *i3cdev)
 	}
 
 	i3c_master_send_getpid(i3cdev->bus, i3cdev->info.dynamic_addr, &i3cdev->info.pid);
-	LOG_INF("ENTDAA: DA 0x%02x at DAT[%d] is assigned, PID 0x%llx",
-			i3cdev->info.dynamic_addr, priv->pos, i3cdev->info.pid);
-
+	LOG_INF("ENTDAA: DA 0x%02x at DAT[%d] is assigned, PID 0x%04x%08x",
+		i3cdev->info.dynamic_addr, priv->pos, (uint32_t)(i3cdev->info.pid >> 32),
+		(uint32_t)i3cdev->info.pid);
 	return 0;
 }
 
