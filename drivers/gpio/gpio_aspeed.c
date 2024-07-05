@@ -367,11 +367,26 @@ static int gpio_aspeed_deb_en(const struct device *dev, gpio_pin_t pin, bool en)
 	return 0;
 }
 
+#define PINCTRL_SCU430		0x7e6e2430
+#define PINCTRL_SCU434		0x7e6e2434
+
 static int gpio_aspeed_config(const struct device *dev,
 			      gpio_pin_t pin, gpio_flags_t flags)
 {
 	int ret = 0;
-	uint32_t io_flags;
+	uint32_t io_flags, scu_reg;
+	uint8_t pin_number = DEV_CFG(dev)->pin_offset + pin;
+
+	/* GPIT and GPIU need to set the pinmux */
+	if (pin_number >= 152 && pin_number < 160) {
+		scu_reg = sys_read32(PINCTRL_SCU430);
+		scu_reg |= (BIT(pin_number - 152) << 24);
+		sys_write32(scu_reg, PINCTRL_SCU430);
+	} else if (pin_number >= 160 && pin_number < 168) {
+		scu_reg = sys_read32(PINCTRL_SCU434);
+		scu_reg |= BIT(pin_number - 160);
+		sys_write32(scu_reg, PINCTRL_SCU434);
+	}
 
 	/* Does not support disconnected pin, and
 	 * not supporting both input/output at same time.
