@@ -19,7 +19,8 @@
 #define SWMBX_PROTECT		BIT(0)
 #define SWMBX_NOTIFY		BIT(1)
 #define SWMBX_FIFO		BIT(2)
-#define FLAG_MASK		(BIT(0) | BIT(1) | BIT(2))
+#define SWMBX_DIS_NONSECURITY		BIT(3)
+#define FLAG_MASK		(BIT(0) | BIT(1) | BIT(2) | BIT(3))
 
 /* fifo notify flags */
 #define SWMBX_FIFO_NOTIFY_START	BIT(0)
