@@ -182,11 +182,6 @@ void swmbx_send_msg(uint8_t port, uint8_t addr, uint8_t *val)
 	struct swmbx_ctrl_data *data = (struct swmbx_ctrl_data *)(*swmbx_info);
 	bool mbx_write_data = false;
 
-	if (data->mbx_en & SWMBX_DIS_NONSECURITY) {
-		LOG_DBG("swmbx: send msg: disallow non security");
-		return;
-	}
-
 	LOG_DBG("swmbx: send msg: addr 0x%x val 0x%x", addr, *val);
 
 	/* check the FIFO is executed or not */
