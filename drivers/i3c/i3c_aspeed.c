@@ -396,6 +396,7 @@ struct aspeed_i3c_config {
 	uintptr_t base;
 	uintptr_t global_regs;
 	uint32_t global_idx;
+	uint32_t dcr;
 	struct reset_dt_spec global_reset;
 	struct reset_dt_spec core_reset;
 	const struct device *clock_dev;
@@ -1464,6 +1465,11 @@ static void aspeed_i3c_init_pid(struct aspeed_i3c_data *data)
 	reg = FIELD_PREP(SLV_PID_PART_ID, rev_id) |
 	      FIELD_PREP(SLV_PID_INST_ID, data->config->global_idx);
 	sys_write32(reg, data->config->base + SLV_PID_LO);
+
+	reg = sys_read32(data->config->base + SLV_CHAR_CTRL);
+	reg &= ~SLV_DCR;
+	reg |= FIELD_PREP(SLV_DCR, data->config->dcr) | FIELD_PREP(SLV_BCR, 0x66);
+	sys_write32(reg, data->config->base + SLV_CHAR_CTRL);
 }
 
 static int aspeed_i3c_target_tx_write(const struct device *dev, uint8_t *buf,
@@ -1943,6 +1949,7 @@ static struct i3c_driver_api aspeed_i3c_driver_api = {
 		.base = DT_INST_REG_ADDR(n),                                                       \
 		.global_regs = DT_REG_ADDR(DT_PHANDLE_BY_IDX(DT_DRV_INST(n), global_regs, 0)),     \
 		.global_idx = DT_PHA_BY_IDX(DT_DRV_INST(n), global_regs, 0, id),                   \
+		.dcr = DT_INST_PROP_OR(n, dcr, 0),                                                 \
 		.global_reset.dev = DEVICE_DT_GET(DT_INST_RESET_CTLR_BY_NAME(n, global)),          \
 		.global_reset.id = DT_RESET_CELL_BY_NAME(DT_DRV_INST(n), global, id),              \
 		.core_reset.dev = DEVICE_DT_GET(DT_INST_RESET_CTLR_BY_NAME(n, core)),              \
