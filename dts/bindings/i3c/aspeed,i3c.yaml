@@ -53,6 +53,12 @@ properties:
       Extra information of the PID Bits[11:0]. Use to identify the different BIC.
       If extra-gpios exist, the extra pid will be replaced by the value of extra-gpios.
 
+  dcr:
+    required: false
+    type: int
+    description: |
+      Device Characteristics Register (DCR). This property is only valid for target mode.
+
   i3c-pp-scl-hi-period-ns:
     required: false
     type: int
