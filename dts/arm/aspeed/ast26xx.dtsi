@@ -47,6 +47,27 @@
 			};
 		};
 
+		pwm_tach: pwm_tach@7e610000 {
+			reg = <0x7e610000 0x100>;
+			pwm: pwm {
+				compatible = "aspeed,pwm";
+				#pwm-cells = <3>;
+				npwms = <16>;
+				clocks = <&sysclk ASPEED_CLK_HCLK>;
+				resets = <&sysrst ASPEED_RESET_PWM_TACH>;
+				status = "disabled";
+			};
+			tach: tach {
+				compatible = "aspeed,tach";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				clocks = <&sysclk ASPEED_CLK_HCLK>;
+				resets = <&sysrst ASPEED_RESET_PWM_TACH>;
+				interrupts = <44 AST10X0_IRQ_DEFAULT_PRIORITY>;
+				status = "disabled";
+			};
+		};
+
 		ipc: ipc@7e6c0000 {
 			compatible = "aspeed,ast2600-ipc";
 			reg = <0x7e6c0000 0x100>;

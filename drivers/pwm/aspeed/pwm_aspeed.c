@@ -10,6 +10,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pwm_aspeed);
 
+#include <stdlib.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/sys_io.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/pwm.h>
