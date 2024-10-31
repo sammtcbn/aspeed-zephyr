@@ -54,7 +54,7 @@ source "drivers/mfd/Kconfig"
 source "drivers/mipi_dsi/Kconfig"
 source "drivers/misc/Kconfig"
 source "drivers/mm/Kconfig"
-source "drivers/modem/Kconfig"
+#source "drivers/modem/Kconfig" //samlin-
 source "drivers/net/Kconfig"
 source "drivers/neural_net/Kconfig"
 source "drivers/pcie/Kconfig"
