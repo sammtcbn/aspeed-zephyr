@@ -7,9 +7,9 @@ menu "Device Drivers"
 
 source "drivers/adc/Kconfig"
 source "drivers/auxdisplay/Kconfig"
-source "drivers/audio/Kconfig"
+#source "drivers/audio/Kconfig" //samlin-
 source "drivers/bbram/Kconfig"
-#source "drivers/bluetooth/Kconfig"
+#source "drivers/bluetooth/Kconfig" //samlin-
 source "drivers/cache/Kconfig"
 source "drivers/can/Kconfig"
 source "drivers/clock_control/Kconfig"
@@ -77,12 +77,12 @@ source "drivers/syscon/Kconfig"
 source "drivers/timer/Kconfig"
 source "drivers/usb/Kconfig"
 source "drivers/usb_c/Kconfig"
-source "drivers/video/Kconfig"
-#source "drivers/virtualization/Kconfig"
-#source "drivers/w1/Kconfig"
+#source "drivers/video/Kconfig" //samlin-
+#source "drivers/virtualization/Kconfig" //samlin-
+#source "drivers/w1/Kconfig" //samlin-
 source "drivers/watchdog/Kconfig"
-#source "drivers/wifi/Kconfig"
-#source "drivers/xen/Kconfig"
+#source "drivers/wifi/Kconfig" //samlin-
+#source "drivers/xen/Kconfig" //samlin-
 source "drivers/sip_svc/Kconfig"
 
 endmenu
