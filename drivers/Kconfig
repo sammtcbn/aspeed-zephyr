@@ -46,7 +46,7 @@ source "drivers/ipmi/Kconfig"
 source "drivers/kscan/Kconfig"
 source "drivers/led/Kconfig"
 source "drivers/led_strip/Kconfig"
-source "drivers/lora/Kconfig"
+#source "drivers/lora/Kconfig" //samlin-
 source "drivers/mbox/Kconfig"
 source "drivers/mdio/Kconfig"
 source "drivers/memc/Kconfig"
