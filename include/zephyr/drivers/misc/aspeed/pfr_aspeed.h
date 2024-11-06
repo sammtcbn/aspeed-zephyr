@@ -24,6 +24,13 @@
 #define CMD_EX4B            0xE9
 #define CMD_RDFSR           0x70
 #define CMD_VSR_WREN        0x50
+#define CMD_BE32K4B			0x5C	//samlin+
+#define CMD_WRLR			0x2C	//samlin+
+#define CMD_RDDPB			0xE0	//samlin+
+#define CMD_RDFBR			0x16	//samlin+
+#define CMD_PGMERS			0xB0	//samlin+
+#define CMD_RDSPB			0xE2	//samlin+
+#define CMD_ESSPB			0xE4	//samlin+
 
 /* read commands */
 #define CMD_READ_1_1_1_3B   0x03

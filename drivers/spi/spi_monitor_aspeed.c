@@ -97,6 +97,22 @@ struct cmd_table_info cmds_array[] = {
 		.cmd_table_val = CMD_TABLE_VALUE(1, 0, 0, 0, 0, 0, 0, 0, 0, CMD_VSR_WREN)},
 	{.cmd = CMD_WREAR,
 		.cmd_table_val = CMD_TABLE_VALUE(0, 1, 0, 0, 1, 0, 0, 0, 0, CMD_WREAR)},
+//samlin+{
+	{.cmd = CMD_BE32K4B,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 1, 0, 1, 0, 0, 4, 4, 1, CMD_BE32K4B)},
+	{.cmd = CMD_WRLR,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 1, 0, 1, 0, 0, 0, 0, 1, CMD_WRLR)},
+	{.cmd = CMD_RDDPB,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 0, 1, 1, 0, 0, 0, 4, 1, CMD_RDDPB)},
+	{.cmd = CMD_RDFBR,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 0, 1, 1, 0, 0, 0, 0, 1, CMD_RDFBR)},
+	{.cmd = CMD_PGMERS,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 1, 0, 1, 0, 0, 0, 0, 3, CMD_PGMERS)},
+	{.cmd = CMD_RDSPB,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 0, 1, 1, 0, 0, 0, 4, 1, CMD_RDSPB)},
+	{.cmd = CMD_ESSPB,
+		.cmd_table_val = CMD_TABLE_VALUE(1, 1, 0, 1, 0, 0, 0, 0, 1, CMD_ESSPB)},
+//samlin+}
 };
 
 static uint8_t spim_log_arr[SPIM_LOG_RAM_TOTAL_SIZE] NON_CACHED_BSS_ALIGN16;
