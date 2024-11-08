@@ -89,6 +89,7 @@ void ast_i2c_filter_isr(const struct device *dev)
 	uint32_t filter_dev_base = 0, dev_base = 0, stsl = 0, sts = 0;
 	uint32_t value = 0, count = 0;
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	dev_base = cfg->filter_g_base + AST_I2C_F_D_BASE;
 
 	/* find which one local filter interrupt status */
@@ -123,6 +124,7 @@ void ast_i2c_filter_isr(const struct device *dev)
 			}
 		}
 	}
+	LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 }
 
 /* i2c filter default */
@@ -136,6 +138,7 @@ int ast_i2c_filter_default(const struct device *dev, uint8_t pass)
 	struct ast_i2c_f_tbl *dev_wl_tbl = &filter_tbl[(cfg->index)];
 	struct ast_i2c_f_bitmap *bmp_buf = &dev_wl_tbl->filter_tbl[0];
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* transation will be all pass */
 	if (pass)
 		value = 0xFFFFFFFF;
@@ -145,6 +148,7 @@ int ast_i2c_filter_default(const struct device *dev, uint8_t pass)
 		bmp_buf->element[i] = value;
 	}
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
@@ -162,6 +166,7 @@ struct ast_i2c_f_bitmap *table)
 	struct ast_i2c_f_tbl *dev_wl_tbl = &filter_tbl[(cfg->index)];
 	struct ast_i2c_f_bitmap *bmp_buf = &dev_wl_tbl->filter_tbl[0];
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* check parameter valid */
 	if (!data->filter_dev_base) {
 		LOG_ERR("i2c filter not be initial");
@@ -202,6 +207,7 @@ struct ast_i2c_f_bitmap *table)
 		bmp_buf->element[i] = table->element[i];
 	}
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
@@ -212,6 +218,7 @@ uint8_t clr_idx, uint8_t clr_tbl)
 	struct ast_i2c_filter_child_data *data = DEV_C_DATA(dev);
 	const struct ast_i2c_filter_child_config *cfg = DEV_C_CFG(dev);
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* check parameter valid */
 	if (!data->filter_dev_base) {
 		LOG_ERR("i2c filter not be initial");
@@ -267,6 +274,7 @@ uint8_t clr_idx, uint8_t clr_tbl)
 	I2C_W_R(data->filter_dev_en, (data->filter_dev_base + AST_I2C_F_EN));
 	I2C_W_R(data->filter_en, (data->filter_dev_base + AST_I2C_F_CFG));
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
@@ -280,6 +288,7 @@ int ast_i2c_filter_init(const struct device *dev)
 	uint32_t clk_src;
 	int error = 0;
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* check parameter valid */
 	if (!data->filter_dev_base) {
 		LOG_ERR("i2c filter not be initial");
@@ -324,6 +333,7 @@ int ast_i2c_filter_init(const struct device *dev)
 	ginten |= (0x1 << (cfg->index));
 	I2C_W_R(ginten, (gcfg->filter_g_base + AST_I2C_F_G_INT_EN));
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
@@ -335,6 +345,7 @@ int ast_i2c_filter_child_init(const struct device *dev)
 	const struct ast_i2c_filter_config *gcfg = DEV_CFG(cfg->parent);
 	int i = 0;
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* assign filter device base */
 	data->filter_dev_base = (gcfg->filter_g_base + AST_I2C_F_D_BASE);
 	data->filter_dev_base += (cfg->index * AST_I2C_F_D_OFFSET);
@@ -350,6 +361,7 @@ int ast_i2c_filter_child_init(const struct device *dev)
 	/* initial filter buffer */
 	data->filter_buf = NULL;
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
@@ -358,9 +370,11 @@ int ast_i2c_filter_global_init(const struct device *dev)
 {
 	const struct ast_i2c_filter_config *cfg = DEV_CFG(dev);
 
+    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
 	/* hook interrupt routine*/
 	cfg->irq_config_func(dev);
 
+    LOG_INF("!!! %s , out", __FUNCTION__); //samlin!!!
 	return 0;
 }
 
