@@ -218,7 +218,7 @@ uint8_t clr_idx, uint8_t clr_tbl)
 	struct ast_i2c_filter_child_data *data = DEV_C_DATA(dev);
 	const struct ast_i2c_filter_child_config *cfg = DEV_C_CFG(dev);
 
-    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
+    LOG_INF("!!! %s , in , %s , filter_en=%d, wlist_en=%d", __FUNCTION__, dev->name, filter_en, wlist_en); //samlin!!!
 	/* check parameter valid */
 	if (!data->filter_dev_base) {
 		LOG_ERR("i2c filter not be initial");
@@ -288,7 +288,7 @@ int ast_i2c_filter_init(const struct device *dev)
 	uint32_t clk_src;
 	int error = 0;
 
-    LOG_INF("!!! %s , in", __FUNCTION__); //samlin!!!
+    LOG_INF("!!! %s , in , %s", __FUNCTION__, dev->name); //samlin!!!
 	/* check parameter valid */
 	if (!data->filter_dev_base) {
 		LOG_ERR("i2c filter not be initial");
